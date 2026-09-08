@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+*.log
+
+# 本地杂项不入库(源码零引用的外来物)
+*.bak
+IMG_*.jpg
+/dsh-session-*/
+
+# 运行时记忆(本仓 dogfood 的项目层记忆,开源仓不入库)
+.memory/

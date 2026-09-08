@@ -1,0 +1,38 @@
+{
+  "name": "@xiaoxia/dsh-soul-memory",
+  "version": "0.4.0",
+  "type": "module",
+  "main": "soul-memory.mjs",
+  "description": "SOUL/MEMORY 跨会话记忆插件:L1/L2/L3 三层记忆注入 + memory_recall/write_root/write_logfile/correct/creator 五件套工具",
+  "license": "MIT",
+  "author": "xiazhenxin314-cpu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiazhenxin314-cpu/dsh-soul-memory.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiazhenxin314-cpu/dsh-soul-memory/issues"
+  },
+  "homepage": "https://github.com/xiazhenxin314-cpu/dsh-soul-memory#readme",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "memory",
+    "soul",
+    "cross-session",
+    "cordis",
+    "plugin"
+  ],
+  "scripts": {
+    "test": "node tests/smoke.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-tools": "*"
+  }
+}
