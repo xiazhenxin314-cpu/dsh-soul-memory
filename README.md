@@ -34,7 +34,19 @@ git clone https://github.com/xiazhenxin314-cpu/dsh-soul-memory.git
 DSH_HOME=<该部署的 home> dsh plugin --profile web add ./dsh-soul-memory
 ```
 
-然后重启该部署服务(systemd:`sudo systemctl restart dsh-<服务名>`);link: 挂载下仅改源码时重启即生效。
+前置条件:目标部署已装 `@deepseek-ai/dsh`(`dsh` 在 PATH 上),且你知道它的 `$DSH_HOME`。
+
+装完需**重启 DSH 进程**才会加载新插件。DSH 本身就是一个普通前台命令
+(`dsh web` 即 `dsh --profile web` 的别名),**不要求以系统服务方式运行**——
+是否常驻、怎么重启由你的启动方式决定:
+
+| 启动方式 | 重启做法 |
+|---|---|
+| 前台 `dsh web` | `Ctrl-C` 后重新执行 |
+| tmux / screen | 结束该窗口内的进程并重开 |
+| systemd 托管 | `sudo systemctl restart dsh-<服务名>` |
+
+以 `link:` 方式挂载本包时,改动本包源码后同样是重启进程即生效(host 半模块需重新加载)。
 
 ## 快速上手:两个即用模板
 
