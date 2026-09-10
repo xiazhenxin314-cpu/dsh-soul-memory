@@ -1,6 +1,6 @@
 {
   "name": "@xiaoxia/dsh-soul-memory",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "main": "soul-memory.mjs",
   "description": "SOUL/MEMORY 跨会话记忆插件:L1/L2/L3 三层记忆注入 + memory_recall/write_root/write_logfile/correct/creator 五件套工具",
@@ -32,7 +32,7 @@
     }
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "*",
-    "@deepseek-ai/dsh-tools": "*"
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6 <0.2.0"
   }
 }
