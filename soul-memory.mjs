@@ -24,7 +24,7 @@
  *  - lib/root-memory.mjs   L1 MEMORY.md 小节寻址与写操作;
  *  - lib/logfile-write.mjs L2/L3 logfile 追加/订正/建壳;
  *  - lib/memory-view.mjs   迁移 memo + 三层发现 + 冻结渲染 + recall 路由;
- *  - lib/logfile.mjs（本轮迁入 readTextSafe） / budget.mjs / migrate.mjs / soul-service.mjs 原样;
+ *  - lib/logfile.mjs（本轮迁入 readTextSafe）/ budget.mjs / migrate.mjs 原样; soul-service.mjs 仅 fail 内联（审查 P1 订正）;
  *  - 本文件只留插件主体:name/inject、cwdForProject、apply()(初始文件/服务面/
  *    每 agent 快照/system prompt 段/五件套工具),并把各纯函数 re-export,
  *    公开导出面与整理前逐一对应(tests/smoke.mjs 的深导入不受影响)。
