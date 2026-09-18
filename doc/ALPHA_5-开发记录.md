@@ -72,3 +72,11 @@ A0 之后未动任何代码；本仓无 A2 commit，仅有 A4 纯 doc commit。
 1. **实机注入/工具行为未断言**（NOT VERIFIED，任务书既定未取证项）：tsc 级与定义期校验均绿，但 system prompt assemble、工具执行链的运行真相以总控在 3181 恢复挂载后的实机断言为准。
 2. C11/C12 运行期项（HMR、loader 非事务化、`dsh plugin add` 构建审批）不属仓内代码，挂载期由总控按批次记录处理。
 3. peerDependencies 字面张力（§A1 C10 观察）：若未来 pnpm 严格模式告警，再立 pending，本次不动。
+
+## A5 独立审查结论（2026-09-19，零改动仓单审查员）
+
+- diff 核验：`d0d0c9b..e1fd4a2` 仅新增本记录（74 行纯 doc），零代码改动，工作树干净。
+- 证据抽查：C1/C2 全仓 grep 零命中 PASS；官方 defineTool 定义面（packages/core/tools/src/schema.ts）两 tag 零 diff PASS；`node tests/smoke.mjs` 复跑 0（PASS: 59 assertions）；node_modules 内 @deepseek-ai/dsh-tools 实为 0.1.6-alpha.2 真实产物，apply 演习结论含金量成立。
+- 门禁符合性：头部齐、口径合规、凭据扫描零命中、未 push。
+- **审查结论：PASS**（仓内证据层；实机行为归 3181 恢复挂载期总控断言）。
+
