@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/messages.mjs — 中文报错语料(纯文本,零依赖)
+ * dsh-soul-memory / src/messages.mjs — 中文报错语料(纯文本,零依赖)
  *
  * 自 soul-memory.mjs 集中迁出(2026-09-13 ALPHA_0.5 taste 整理):错误文案逐字
  * 未动,只换住处。root 写面与 logfile 写面共享 needContent/correctBan,故语料

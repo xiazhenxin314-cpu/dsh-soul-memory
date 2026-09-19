@@ -26,9 +26,9 @@ import {
   renderFrontmatter,
   scanLogfileDir,
   splitEntryHeading,
-} from '../lib/logfile.mjs'
-import { applyInjectionBudget, entryBullet } from '../lib/budget.mjs'
-import { migrateLegacyDotMemory } from '../lib/migrate.mjs'
+} from '../src/logfile.mjs'
+import { applyInjectionBudget, entryBullet } from '../src/budget.mjs'
+import { migrateLegacyDotMemory } from '../src/migrate.mjs'
 import {
   appendLogfile,
   appendRootMemory,
@@ -41,8 +41,8 @@ import {
   recallMemory,
   renderMemoryBlock,
   sectionBody,
-} from '../soul-memory.mjs'
-import { createSoulMemoryService } from '../lib/soul-service.mjs'
+} from '../src/soul-memory.mjs'
+import { createSoulMemoryService } from '../src/soul-service.mjs'
 
 let passed = 0
 const ok = (label) => { passed += 1; console.log('  ok - ' + label) }
@@ -67,7 +67,7 @@ const touch = (path, content, mtime) => {
 }
 
 try {
-  // ================= lib/logfile.mjs =================
+  // ================= src/logfile.mjs =================
   console.log('parseLogfile')
   const sample = renderFrontmatter({ name: 'pay-boss', type: 'situation', description: '支付对接上级画像' }) + '\n正文段落。\n'
   let parsed = parseLogfile(sample, '/x/pay-boss.md')
@@ -189,7 +189,7 @@ try {
   assert.equal(bigRead.entry.body, 'a'.repeat(MAX_READ_BYTES - 2))
   ok('readLogfile 截断回退 UTF-8 码点边界,无替换符(A4)')
 
-  // ================= lib/budget.mjs =================
+  // ================= src/budget.mjs =================
   console.log('applyInjectionBudget')
   const rt100 = Array.from({ length: 99 }, (_, i) => 'line ' + i).join('\n') + '\n'
   const home50 = Array.from({ length: 50 }, (_, i) => mkentry('home-' + i, 'user', 'h'))
@@ -223,7 +223,7 @@ try {
   assert.equal(entryBullet(mkentry('n', 'user', 'd')), '- n [user] d')
   ok('entryBullet 格式')
 
-  // ================= lib/migrate.mjs =================
+  // ================= src/migrate.mjs =================
   console.log('migrateLegacyDotMemory')
   const legacyProj = join(root, 'legacy')
   mkdirSync(join(legacyProj, '.git'), { recursive: true })

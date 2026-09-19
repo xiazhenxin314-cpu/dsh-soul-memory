@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/root-memory.mjs — L1 root(MEMORY.md)小节寻址与写操作
+ * dsh-soul-memory / src/root-memory.mjs — L1 root(MEMORY.md)小节寻址与写操作
  *
  * 自 soul-memory.mjs 顶层纯函数层迁出(2026-09-13 ALPHA_0.5 taste 整理),函数体
  * 逐字未动(BSN 常量还原为 '\n' 字面量,值相等)。寻址语义沿用 v1:'## 小节名'

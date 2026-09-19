@@ -11,23 +11,27 @@
  * memory_creator(建 logfile)。v1 的 memory_view / memory_compact 已下线。
  *
  * 注入预算(L1>L2>L3):system prompt 冻结记忆内容总量 ≤ 200 行 或 16384 字符,
- * L1 全额永不截断,超限从最低层(尾部=最旧)截断 + 一行指向提示(见 lib/budget.mjs)。
+ * L1 全额永不截断,超限从最低层(尾部=最旧)截断 + 一行指向提示(见 budget.mjs)。
  *
  * 拍板记录(2026-08-26):
- *  - v1 单文件 .memory → 一次性自动迁移(lib/migrate.mjs,惰性触发+回滚);
+ *  - v1 单文件 .memory → 一次性自动迁移(migrate.mjs,惰性触发+回滚);
  *  - catalog 载体 = systemPrompt 冻结段;web 小模块 = 独立待做插件(暂缓);
  *  - logfile append 自动加时间戳小节;logfile 无 delete(删除仅人工);
  *  - logfile 文件本体不设独立写入上限(注入预算 + 用户自律兜底)。
  *
  * 模块布局(2026-09-13 ALPHA_0.5 taste 整理;公开导出面与挂载入口不变):
- *  - lib/messages.mjs      中文报错语料(纯文本,零依赖);
- *  - lib/root-memory.mjs   L1 MEMORY.md 小节寻址与写操作;
- *  - lib/logfile-write.mjs L2/L3 logfile 追加/订正/建壳;
- *  - lib/memory-view.mjs   迁移 memo + 三层发现 + 冻结渲染 + recall 路由;
- *  - lib/logfile.mjs（本轮迁入 readTextSafe）/ budget.mjs / migrate.mjs 原样; soul-service.mjs 仅 fail 内联（审查 P1 订正）;
+ *  - src/messages.mjs      中文报错语料(纯文本,零依赖);
+ *  - src/root-memory.mjs   L1 MEMORY.md 小节寻址与写操作;
+ *  - src/logfile-write.mjs L2/L3 logfile 追加/订正/建壳;
+ *  - src/memory-view.mjs   迁移 memo + 三层发现 + 冻结渲染 + recall 路由;
+ *  - src/logfile.mjs（本轮迁入 readTextSafe）/ budget.mjs / migrate.mjs 原样; soul-service.mjs 仅 fail 内联（审查 P1 订正）;
  *  - 本文件只留插件主体:name/inject、cwdForProject、apply()(初始文件/服务面/
  *    每 agent 快照/system prompt 段/五件套工具),并把各纯函数 re-export,
  *    公开导出面与整理前逐一对应(tests/smoke.mjs 的深导入不受影响)。
+ *
+ * 布局修订(2026-09-19,用户拍板推翻 ALPHA_0.5 F10「lib/=源码不移动」):
+ * 源码 lib/ 整体迁至 src/(入口 soul-memory.mjs 一并迁入,main=src/soul-memory.mjs),
+ * 对齐工作区口径「lib/=生成物、src/=源码」;公开导出面与挂载面零变化。
  */
 
 import { existsSync } from 'node:fs'
@@ -41,8 +45,8 @@ import {
   normalizeLogfileName,
   readTextSafe,
   writeTextAtomic,
-} from './lib/logfile.mjs'
-import { MSG } from './lib/messages.mjs'
+} from './logfile.mjs'
+import { MSG } from './messages.mjs'
 import {
   DEFAULT_MAX_CHARS,
   appendRootMemory,
@@ -50,10 +54,10 @@ import {
   correctRootMemory,
   listSectionKeys,
   sectionBody,
-} from './lib/root-memory.mjs'
-import { appendLogfile, correctLogfile, createLogfile } from './lib/logfile-write.mjs'
-import { discoverMemoryLayers, recallMemory, renderMemoryBlock } from './lib/memory-view.mjs'
-import { createSoulMemoryService } from './lib/soul-service.mjs'
+} from './root-memory.mjs'
+import { appendLogfile, correctLogfile, createLogfile } from './logfile-write.mjs'
+import { discoverMemoryLayers, recallMemory, renderMemoryBlock } from './memory-view.mjs'
+import { createSoulMemoryService } from './soul-service.mjs'
 
 export const name = '@xiaoxia/dsh-soul-memory'
 

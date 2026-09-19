@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/logfile.mjs — L2/L3 logfile 纯函数层(零依赖)
+ * dsh-soul-memory / src/logfile.mjs — L2/L3 logfile 纯函数层(零依赖)
  *
  * v2.1(2026-08-27 写入规范与命名放开改造):
  *  - 命名放开:中文名可用(normalizeLogfileName + isLogfileName)。禁止:/ \ 与控制字符、

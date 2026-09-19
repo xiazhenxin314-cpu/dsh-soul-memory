@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/memory-view.mjs — 发现/渲染/读路由(每 agent 冻结视图)
+ * dsh-soul-memory / src/memory-view.mjs — 发现/渲染/读路由(每 agent 冻结视图)
  *
  * 自 soul-memory.mjs 迁出(2026-09-13 ALPHA_0.5 taste 整理),函数体逐字未动:
  *  - 迁移 memo(每项目根只尝试一次,幂等,只缓存成功结果)+ discoverMemoryLayers

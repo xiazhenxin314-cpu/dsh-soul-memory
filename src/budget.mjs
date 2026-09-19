@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/budget.mjs — system prompt 冻结内容的注入预算
+ * dsh-soul-memory / src/budget.mjs — system prompt 冻结内容的注入预算
  *
  * 正式规则(2026-08-26 用户拍板):
  * - 预算 200 行 或 16384 字符(UTF-16 code units),两口径分别核算,任一先到即截;

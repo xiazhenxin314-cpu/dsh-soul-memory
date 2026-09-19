@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/soul-service.mjs — 公开服务面 'soulMemory'(v0.3.0)
+ * dsh-soul-memory / src/soul-service.mjs — 公开服务面 'soulMemory'(v0.3.0)
  *
  * 消费方(dsh-top-tab 等)通过 cordis 服务名 'soulMemory' 获取——插件间协作
  * 走公开服务,不 value-import 对方运行时实现。读面 + 编辑面,全部复用

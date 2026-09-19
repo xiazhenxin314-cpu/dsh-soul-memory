@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/migrate.mjs — v1 单文件 <projectRoot>/.memory 自动迁移
+ * dsh-soul-memory / src/migrate.mjs — v1 单文件 <projectRoot>/.memory 自动迁移
  *
  * 拍板(2026-08-26):一次性自动迁移。发现层惰性触发:
  *  - `.memory` 是文件(v1 形态)→ rename 让位 → mkdir 目录 →

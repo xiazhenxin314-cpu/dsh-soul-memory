@@ -1,5 +1,5 @@
 /**
- * dsh-soul-memory / lib/logfile-write.mjs — L2/L3 logfile 追加/订正/建壳
+ * dsh-soul-memory / src/logfile-write.mjs — L2/L3 logfile 追加/订正/建壳
  *
  * 自 soul-memory.mjs 迁出(2026-09-13 ALPHA_0.5 taste 整理),函数体逐字未动
  * (BSN 常量还原为 '\n' 字面量,值相等;两处「读原文失败抛 logfileMissing」

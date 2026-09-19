@@ -2,7 +2,7 @@
   "name": "@xiaoxia/dsh-soul-memory",
   "version": "0.4.1",
   "type": "module",
-  "main": "soul-memory.mjs",
+  "main": "src/soul-memory.mjs",
   "description": "SOUL/MEMORY 跨会话记忆插件:L1/L2/L3 三层记忆注入 + memory_recall/write_root/write_logfile/correct/creator 五件套工具",
   "license": "MIT",
   "author": "xiazhenxin314-cpu",
