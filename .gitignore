@@ -10,5 +10,6 @@ dist/
 IMG_*.jpg
 /dsh-session-*/
 
-# 运行时记忆(本仓 dogfood 的项目层记忆,开源仓不入库)
+# 运行时记忆(本仓 dogfood 的项目层记忆,开源仓不入库;2026-09-19 起载体为 .agents/.memory,旧 .memory/ 过渡期兜底)
+.agents/.memory/
 .memory/

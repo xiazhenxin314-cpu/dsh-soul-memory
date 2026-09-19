@@ -8,7 +8,7 @@ SOUL/MEMORY 三层跨会话记忆插件(纯 ESM,无构建步骤),面向 DeepSeek
 
 ## 功能(v2.1)
 
-- **L1** `$DSH_HOME/MEMORY.md` 与 **L2/L3** `.memory/<名>.md`(home=跨项目,project=项目根):
+- **L1** `$DSH_HOME/MEMORY.md` 与 **L2/L3** logfile(`L2=$DSH_HOME/.memory` 跨项目;`L3=<项目根>/.agents/.memory`):
   注入统一走 `<memory>` 大包裹(内嵌 <root>/<home>/<project> 层块,横线分隔在尖括号之外),
   条目只展示 name/type/description,全文按需读;
 - **注入预算 L1>L2>L3**:200 行或 16384 字符,L1 永不截断,低层从最旧截断 + 英文指向提示;
@@ -21,7 +21,7 @@ SOUL/MEMORY 三层跨会话记忆插件(纯 ESM,无构建步骤),面向 DeepSeek
 - **命名放开**:中文名可用;禁路径分隔/控制字符/首尾点空格;≤64 字符,NFC 归一,.md 自动剥;
 - **不变量**:append 免寻址;寻址必须唯一命中;content 行首 #/## 禁止,### 分块软规范;
   结构级操作(换 H1/删文件/旧格式迁移)归人工;.bak 单代备份兜底;
-- **v1 单文件 .memory 自动迁移**(幂等+回滚);mem.config maxChars 默认 16384;
+- **旧 `.memory` 自动搬迁至 `.agents/.memory`**(v1 单文件/v2 目录;幂等+回滚;项目根不再落 `.memory`);mem.config maxChars 默认 16384;
 - 幂等创建 $DSH_HOME/{SOUL.md,MEMORY.md,mem.config};
 - 对外公开 cordis 服务 `soulMemory`(readLayers/readLogfile/edit),供其他插件消费,语义与工具面严格一致。
 

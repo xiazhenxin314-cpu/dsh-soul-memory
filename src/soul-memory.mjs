@@ -4,7 +4,7 @@
  * 三层结构(2026-08-26 重构):
  *  - L1 root : $DSH_HOME/MEMORY.md           → sys prompt 完整展开(冻结注入);
  *  - L2 home : $DSH_HOME/.memory/<name>.md   → catalog 展示 name+type+description;
- *  - L3 proj : <projectRoot>/.memory/<name>.md → catalog 展示(项目根=最近含 .git 祖先)。
+ *  - L3 proj : <projectRoot>/.agents/.memory/<name>.md → catalog 展示(项目根=最近含 .git 祖先)。
  *
  * 工具面五件套:memory_recall(唯一读)/ memory_write_root(ROOT 小节追加)/
  * memory_write_logfile(条目追加)/ memory_correct(订正/删除)/
@@ -14,7 +14,7 @@
  * L1 全额永不截断,超限从最低层(尾部=最旧)截断 + 一行指向提示(见 budget.mjs)。
  *
  * 拍板记录(2026-08-26):
- *  - v1 单文件 .memory → 一次性自动迁移(migrate.mjs,惰性触发+回滚);
+ *  - 旧 .memory(单文件/目录)→ 自动搬迁至 .agents/.memory(migrate.mjs,惰性触发+回滚);
  *  - catalog 载体 = systemPrompt 冻结段;web 小模块 = 独立待做插件(暂缓);
  *  - logfile append 自动加时间戳小节;logfile 无 delete(删除仅人工);
  *  - logfile 文件本体不设独立写入上限(注入预算 + 用户自律兜底)。
@@ -32,6 +32,8 @@
  * 布局修订(2026-09-19,用户拍板推翻 ALPHA_0.5 F10「lib/=源码不移动」):
  * 源码 lib/ 整体迁至 src/(入口 soul-memory.mjs 一并迁入,main=src/soul-memory.mjs),
  * 对齐工作区口径「lib/=生成物、src/=源码」;公开导出面与挂载面零变化。
+ * 同日拍板:L3 项目层载体 .memory → .agents/.memory(项目根不再落 .memory),
+ * 旧 .memory 由发现层惰性自动搬迁(migrate.mjs)。
  */
 
 import { existsSync } from 'node:fs'
@@ -196,13 +198,13 @@ export function apply(ctx) {
   const homeOrProject = (args) => args.scope === "home" ? "home" : "project"
   const dirForScope = (exec, scope) => scope === "home"
     ? join(dshHome, ".memory")
-    : join(findProjectRootSync(cwdForProject(exec)), ".memory")
+    : join(findProjectRootSync(cwdForProject(exec)), ".agents", ".memory")
 
   ctx.tools.register(defineTool({
     name: "memory_recall",
     description: "Read memory (the only read entry). scope=root (default) reads MEMORY.md - the full file, or one ## section with section. scope=home|project: with a name, read that logfile (128KiB cap); with a type, list entries of that type; with neither, list the whole layer (name+type+description, most recently edited first). Always reads the latest file state. Memory logs situational judgment (like a Log); rules belong to AGENTS.md, skills to SKILL.",
     parameters: {
-      scope: { type: "string", enum: ["root", "home", "project"], description: "Memory layer: root=account MEMORY.md (default); home=$DSH_HOME/.memory; project=<projectRoot>/.memory." },
+      scope: { type: "string", enum: ["root", "home", "project"], description: "Memory layer: root=account MEMORY.md (default); home=$DSH_HOME/.memory; project=<projectRoot>/.agents/.memory." },
       section: { type: "string", description: "scope=root only: the ## section heading to read." },
       type: { type: "string", enum: ["user", "feedback", "project", "situation", "reference"], description: "scope=home|project only: filter the listing by type." },
       name: { type: "string", description: "scope=home|project only: read one logfile by name (without .md)." },
@@ -242,7 +244,7 @@ export function apply(ctx) {
     name: "memory_write_logfile",
     description: "Append one entry to a logfile (HOME/PROJECT); the entry carries a machine-generated timestamp. Content must not contain lines starting with # or ## at line start. Multi-block content: use ### sub-headings. Ask the user first, then verify with memory_recall.",
     parameters: {
-      scope: { type: "string", enum: ["home", "project"], description: "Storage layer: home=$DSH_HOME/.memory (cross-project); project=<projectRoot>/.memory (default)." },
+      scope: { type: "string", enum: ["home", "project"], description: "Storage layer: home=$DSH_HOME/.memory (cross-project); project=<projectRoot>/.agents/.memory (default)." },
       name: { type: "string", required: true, description: "The logfile name (without .md)." },
       title: { type: "string", description: "Optional entry title, shown before the timestamp." },
       content: { type: "string", required: true, description: "The entry body, kept verbatim under the generated heading." },
@@ -294,9 +296,9 @@ export function apply(ctx) {
 
   ctx.tools.register(defineTool({
     name: "memory_creator",
-    description: "Create a logfile shell (HOME/PROJECT). Fill in five fields: scope, name, type, a one-line description, and the heading text - the tool generates the frontmatter fencing and the H1 heading itself; a fresh shell has no entries (first one comes via memory_write_logfile). type takes exactly one of: user / feedback / project / situation / reference. scope selects the storage: home=$DSH_HOME/.memory (cross-project) or project=<projectRoot>/.memory (default). Names must be short and path-safe. An existing logfile blocks creation - remove that file manually to rebuild. New entries appear in the frozen session catalog next session; read them now via memory_recall.",
+    description: "Create a logfile shell (HOME/PROJECT). Fill in five fields: scope, name, type, a one-line description, and the heading text - the tool generates the frontmatter fencing and the H1 heading itself; a fresh shell has no entries (first one comes via memory_write_logfile). type takes exactly one of: user / feedback / project / situation / reference. scope selects the storage: home=$DSH_HOME/.memory (cross-project) or project=<projectRoot>/.agents/.memory (default). Names must be short and path-safe. An existing logfile blocks creation - remove that file manually to rebuild. New entries appear in the frozen session catalog next session; read them now via memory_recall.",
     parameters: {
-      scope: { type: "string", enum: ["home", "project"], description: "Where to store it: home=$DSH_HOME/.memory (cross-project); project=<projectRoot>/.memory (default)." },
+      scope: { type: "string", enum: ["home", "project"], description: "Where to store it: home=$DSH_HOME/.memory (cross-project); project=<projectRoot>/.agents/.memory (default)." },
       name: { type: "string", required: true, description: "Logfile name (without .md). Must be short and path-safe." },
       type: { type: "string", enum: ["user", "feedback", "project", "situation", "reference"], required: true, description: "user=user profile, feedback=feedback style, project=project facts, situation=the world around the user, reference=other repos/folders cited by project work." },
       description: { type: "string", required: true, description: "One line shown in the memory catalog; newlines are folded." },

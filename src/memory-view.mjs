@@ -28,7 +28,7 @@ import { sectionBody } from './root-memory.mjs'
 const MEM_HEADER = '<memory>Cross-session long-term memory; frozen at session start. Confirm with the user before any write; verify with memory_recall afterwards.'
 const ROOT_HINT = '<root>ROOT - account-level MEMORY.md ($DSH_HOME/MEMORY.md), full text below. Anchors: section ("## 小节名") + content.'
 const HOME_HINT = '<home>HOME - low-coupling stable memories ($DSH_HOME/.memory). Listed by name/type/description only; read full text via memory_recall.'
-const PROJ_HINT = '<project>PROJECT - high-confidence project memories (<projectRoot>/.memory). Same listing; read full text via memory_recall.'
+const PROJ_HINT = '<project>PROJECT - high-confidence project memories (<projectRoot>/.agents/.memory). Same listing; read full text via memory_recall.'
 const EMPTY_LAYER = '(no logfile yet - create one with memory_creator)'
 const EMPTY_ROOT = '(MEMORY.md does not exist yet)'
 const SEP = '---'
@@ -56,8 +56,8 @@ export function discoverMemoryLayers(cwd, dshHome) {
     rootText: readTextSafe(join(dshHome, 'MEMORY.md')),
     homeDir: join(dshHome, '.memory'),
     homeEntries: scanLogfileDir(join(dshHome, '.memory')),
-    projDir: join(projectRoot, '.memory'),
-    projEntries: scanLogfileDir(join(projectRoot, '.memory')),
+    projDir: join(projectRoot, '.agents', '.memory'),
+    projEntries: scanLogfileDir(join(projectRoot, '.agents', '.memory')),
     migration,
   }
 }

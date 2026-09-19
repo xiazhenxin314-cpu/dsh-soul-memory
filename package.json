@@ -1,6 +1,6 @@
 {
   "name": "@xiaoxia/dsh-soul-memory",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "main": "src/soul-memory.mjs",
   "description": "SOUL/MEMORY 跨会话记忆插件:L1/L2/L3 三层记忆注入 + memory_recall/write_root/write_logfile/correct/creator 五件套工具",

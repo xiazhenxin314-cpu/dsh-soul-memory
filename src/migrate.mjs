@@ -1,29 +1,55 @@
 /**
- * dsh-soul-memory / src/migrate.mjs — v1 单文件 <projectRoot>/.memory 自动迁移
+ * dsh-soul-memory / src/migrate.mjs — 旧项目层 .memory 自动搬迁至 .agents/.memory
  *
- * 拍板(2026-08-26):一次性自动迁移。发现层惰性触发:
- *  - `.memory` 是文件(v1 形态)→ rename 让位 → mkdir 目录 →
- *    写 `<dir>/project.md`(frontmatter: name=project / type=project /
- *    description=旧文件描述提取)→ 删临时文件;
- *  - `.memory` 是目录(v2 形态)→ 不动;
- *  - 迁移失败 → 尽力回滚(删已建空目录/新文件,rename 回原位),
- *    返回 ok:false,发现层保留旧文件按单 logfile 兼容读。
- * 幂等:迁移后为目录形态,不再触发。
+ * 拍板(2026-09-19):项目根不再落 .memory,L3 载体改为 <projectRoot>/.agents/.memory。
+ * 发现层惰性触发(幂等,只缓存成功结果):
+ *  - `.memory` 不存在 → 不动;
+ *  - `.memory` 是文件(v1 单文件形态)→ mkdir 目标目录 → 旧内容包 frontmatter 写
+ *    `<targetDir>/project.md`(围栏+恰一空行+正文)→ 写成功后才删旧文件;
+ *  - `.memory` 是目录(v2 logfile 形态)→ 目标不存在时 mkdir -p .agents 后整体
+ *    原子 rename 到 .agents/.memory;目标已存在则并存不迁移(留人工合并);
+ *  - 任一步失败 → 尽力回滚(删新文件/目录搬回原位,只删自己建出的空目录),
+ *    返回 ok:false,发现层按空层兼容。
+ * 幂等:搬迁后旧位置不存在,不再触发。
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmdirSync, rmSync, statSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, rmdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { extractDescription, renderFrontmatter, writeTextAtomic } from './logfile.mjs'
 
 /** 迁移结果的判别联合。 */
 export function migrateLegacyDotMemory(projectRoot) {
   const legacyPath = join(projectRoot, '.memory')
+  const targetDir = join(projectRoot, '.agents', '.memory')
+  let legacyIsDir = false
   try {
     if (!existsSync(legacyPath)) return { ok: true, moved: false }
-    if (statSync(legacyPath).isDirectory()) return { ok: true, moved: false }
+    legacyIsDir = statSync(legacyPath).isDirectory()
   } catch (error) {
     return { ok: false, error: `cannot stat ${legacyPath}: ${error instanceof Error ? error.message : String(error)}` }
   }
+  return legacyIsDir ? relocateDir(legacyPath, targetDir) : migrateSingleFile(legacyPath, targetDir)
+}
+
+// v2 目录形态:整体原子 rename;失败搬回原位
+function relocateDir(legacyPath, targetDir) {
+  if (existsSync(targetDir)) return { ok: true, moved: false, note: 'legacy .memory 与 .agents/.memory 并存,未迁移(留人工合并)' }
+  try {
+    mkdirSync(join(targetDir, '..'), { recursive: true })
+    renameSync(legacyPath, targetDir)
+    return { ok: true, moved: true, path: targetDir }
+  } catch (error) {
+    try {
+      if (!existsSync(legacyPath) && existsSync(targetDir)) renameSync(targetDir, legacyPath)
+    } catch {
+      // 回滚失败也不再动,保留现场
+    }
+    return { ok: false, error: `relocation failed: ${error instanceof Error ? error.message : String(error)}` }
+  }
+}
+
+// v1 单文件形态:包 frontmatter 写入新位,写成功后才删旧文件
+function migrateSingleFile(legacyPath, targetDir) {
   let raw
   try {
     raw = readFileSync(legacyPath, 'utf8')
@@ -31,23 +57,21 @@ export function migrateLegacyDotMemory(projectRoot) {
     return { ok: false, error: `cannot read ${legacyPath}: ${error instanceof Error ? error.message : String(error)}` }
   }
   const description = extractDescription(raw, { fallback: '项目情境记忆(旧单文件迁移)' })
-  const tmp = `${legacyPath}.migrating-${process.pid}-${Math.random().toString(36).slice(2)}`
-  const targetFile = join(legacyPath, 'project.md')
+  const targetFile = join(targetDir, 'project.md')
   try {
-    renameSync(legacyPath, tmp)
-    mkdirSync(legacyPath)
+    mkdirSync(targetDir, { recursive: true })
     // 围栏后补恰一空行(审查 G3 修复):对齐 creator 的 fence + 空行 + 正文布局
     writeTextAtomic(targetFile, renderFrontmatter({ name: 'project', type: 'project', description }) + '\n\n' + raw.replace(/^\n+/, ''))
-    rmSync(tmp)
+    rmSync(legacyPath)
     return { ok: true, moved: true, path: targetFile, name: 'project', description }
   } catch (error) {
-    // 尽力回滚:删已写入的新文件 → 删已建目录(仅当为空)→ 恢复原位
+    // 尽力回滚:删已写入的新文件 → 删只为本迁移建出的空目录(旧文件全程未动)
     try {
       if (existsSync(targetFile)) rmSync(targetFile)
-      if (existsSync(legacyPath) && readdirSync(legacyPath).length === 0) rmdirSync(legacyPath)
-      if (existsSync(tmp)) renameSync(tmp, legacyPath)
+      rmdirSync(targetDir)
+      rmdirSync(join(targetDir, '..'))
     } catch {
-      // 回滚失败也不再动,保留现场
+      // 目录非空(如 .agents 下另有 skills)或不存在则保留现场
     }
     return { ok: false, error: `migration failed: ${error instanceof Error ? error.message : String(error)}` }
   }

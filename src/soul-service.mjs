@@ -57,7 +57,7 @@ export function createSoulMemoryService(deps) {
     if (scope === 'home') return homeDir()
     if (scope === 'project') {
       const root = findProjectRootSync(cwd ?? process.cwd())
-      return join(root, '.memory')
+      return join(root, '.agents', '.memory')
     }
     // A5 修复:服务面直传的 scope 拼写错误不再静默当 project,显式报错
     throw new Error('unknown scope: ' + String(scope) + '(仅 home | project)')
