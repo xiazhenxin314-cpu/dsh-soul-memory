@@ -31,6 +31,6 @@ R1 零代码改动；R2 验证只在隔离 lab 与仓内 smoke；R3 诚实口径
 ### 2026-09-24 总控验证
 
 - **S1 PASS**：`pnpm test`（node tests/smoke.mjs）61 assertions 全过 exit 0。
-- **S2 PASS**：peer `>=0.1.0-rc.6 <0.2.0` 真包含 0.1.7-rc.1，兼容门过（lab dump 层行在位佐证）。
+- **S2 PASS**：peer `>=0.1.0-rc.6 <0.2.0` 在兼容门语义（includePrerelease:true）下满足 0.1.7-rc.1（lab dump 层行在位佐证）。注意解析语义不同：本轮 verify 生成的 `pnpm-lock.yaml`（已入库，登记）把 dsh-tools 解析为 0.1.0-rc.8——prerelease 范围在 pnpm 解析下不跨元组（与 skill-tools D2 同一条 semver 规则实证）；本仓纯 .mjs 该 lockfile 对 smoke 无作用，仅作解析记录。
 - **S3 PASS**：隔离 lab（rc.1，3090）bundles 追加本插件，`--dump-config` `id: soul-memory` 层行在位；boot 全树 apply 通过（本仓纯 host 无 client 面，无 boot 图条目属预期）。
 - **S4 NOT VERIFIED**：记忆工具真实调用需 LLM 会话，留正式挂载窗口。
